@@ -56,8 +56,8 @@
     post_reboot_delay: 100
   when: resultwlb.state is defined and resultwlb.state != 'running'
 
-- name: Run winlogbeat setup
-  win_command: "winlogbeat setup -e"
+- name: Run winlogbeat
+  win_command: "winlogbeat -e"
   args:
     chdir: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\"
   when: resultwlb.state is defined and resultwlb.state != 'running'
