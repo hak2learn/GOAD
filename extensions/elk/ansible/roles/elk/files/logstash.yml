@@ -1,0 +1,16 @@
+# ------------ Node identity ------------
+node.name: logstash-win-events
+
+# ------------ Data paths ------------
+path.data: /var/lib/logstash
+
+# ------------ Logging ------------
+path.logs: /var/log/logstash
+log.level: info
+
+# ------------ Monitoring API ------------
+http.host: "0.0.0.0"
+http.port: 9600
+
+# ------------ Pipeline settings ------------
+pipeline.ordered: auto
