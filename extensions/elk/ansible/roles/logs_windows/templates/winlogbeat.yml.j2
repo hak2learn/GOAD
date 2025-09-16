@@ -164,7 +164,7 @@ setup.kibana:
   #password: "changeme"
 
 # ------------------------------ Logstash Output -------------------------------
-#output.logstash:
+output.logstash:
   # The Logstash hosts
   hosts: ["{{ hostvars['elk'].ansible_host }}:5044"]
   #username: "elastic"
