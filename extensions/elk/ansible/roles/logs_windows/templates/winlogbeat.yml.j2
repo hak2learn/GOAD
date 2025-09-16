@@ -81,11 +81,14 @@ winlogbeat.event_logs:
     event_id: 5857,5858,5859,5860,5861 
 # ====================== Elasticsearch template settings =======================
 
-setup.template.settings:
-  index.number_of_shards: 1
+#setup.template.settings:
+  #index.number_of_shards: 1
   #index.codec: best_compression
   #_source.enabled: false
 
+setup.template.enabled: false
+setup.ilm.enabled: false
+setup.kibana: {}
 
 # ================================== General ===================================
 
@@ -118,8 +121,8 @@ setup.template.settings:
 
 # Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
 # This requires a Kibana endpoint configuration.
-setup.kibana:
-  host: "{{ hostvars['elk'].ansible_host }}"
+#setup.kibana:
+  # host: "{{ hostvars['elk'].ansible_host }}"
   # Kibana Host
   # Scheme and port can be left out and will be set to the default (http and 5601)
   # In case you specify and additional path, the scheme is required: http://localhost:5601/path
