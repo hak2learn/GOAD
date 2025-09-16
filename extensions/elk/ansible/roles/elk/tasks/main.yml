@@ -64,6 +64,14 @@
     group: "elasticsearch"
     mode: 0660
 
+- name: copy logstash.yml
+  copy:
+    src: logstash.yml
+    dest: /etc/logstash/logstash.yml
+    owner: "root"
+    group: "logstash"
+    mode: 0640
+
 - name: copy logstash config
   copy:
     src: logstash.conf
