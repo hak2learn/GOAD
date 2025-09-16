@@ -64,6 +64,14 @@
     group: "elasticsearch"
     mode: 0660
 
+- name: copy logstash config
+  copy:
+    src: logstash.conf
+    dest: /etc/logstash/conf.d/logstash.conf
+    owner: "root"
+    group: "logstash"
+    mode: 0660
+
 - name: enable logstash
   service:
     name: logstash
