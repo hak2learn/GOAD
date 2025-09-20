@@ -10,7 +10,7 @@ GIT_FOLDER=$GOAD_REPO/.git
 if [ ! -d $GIT_FOLDER ]
 then
     rm -rf $GOAD_REPO
-    git clone hhttps://github.com/hak2learn/GOAD.git $GOAD_REPO
+    git clone https://github.com/hak2learn/GOAD.git $GOAD_REPO
     cd $GOAD_REPO
     # git checkout -b v3-beta origin/v3-beta
 else
