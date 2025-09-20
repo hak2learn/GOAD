@@ -115,6 +115,7 @@
   loop:
     - kibana
     - logstash
+    - elasticsearch
 
 # Set directory ownership and permissions
 - name: Ensure Elasticsearch certs directory has correct permissions
