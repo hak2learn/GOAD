@@ -109,3 +109,11 @@ server.host: "0.0.0.0"
 # Specifies locale to be used for all localizable strings, dates and number formats.
 # Supported languages are the following: English - en , by default , Chinese - zh-CN .
 #i18n.locale: "en"
+
+elasticsearch.hosts: ["https://localhost:9200"]
+elasticsearch.username: "kibana"
+elasticsearch.password: "changeme"
+elasticsearch.ssl.certificateAuthorities: ["/etc/elasticsearch/certs/instance/instance.crt"]
+xpack.encryptedSavedObjects.encryptionKey: d61644f6c7f5f0af21e5f3ca23ec2888
+xpack.reporting.encryptionKey: d0afbce00e4a8da1814c378dbb83f3bd
+xpack.security.encryptionKey: 2b14fd3ac40ad2c4a3101076c1125daa

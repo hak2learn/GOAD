@@ -8,6 +8,7 @@
     name:
       - apt-transport-https
       - gnupg2
+      - unzip
     state: present
     update_cache: yes
 
@@ -80,15 +81,95 @@
     group: "logstash"
     mode: 0660
 
-- name: enable logstash
-  service:
-    name: logstash
-    enabled: yes
+- name: Create certs directory for Elasticsearch
+  file:
+    path: /etc/elasticsearch/certs
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+    mode: 0750
+
+- name: Generate self-signed certificate for Elasticsearch (single node)
+  command: "/usr/share/elasticsearch/bin/elasticsearch-certutil cert --self-signed --pem --name instance --dns localhost,elk.example.com --ip 127.0.0.1,{{hostvars['elk'].ansible_host}} --out /etc/elasticsearch/certs/certs.zip"
+  args:
+    creates: /etc/elasticsearch/certs/certs.zip
+
+- name: Unarchive generated certs
+  unarchive:
+    src: /etc/elasticsearch/certs/certs.zip
+    dest: /etc/elasticsearch/certs/
+    remote_src: yes
+
+# Ensure a common group for Kibana and Logstash
+- name: Create elk-certs group
+  group:
+    name: elk-certs
+    state: present
+
+# Add kibana and logstash users to the group
+- name: Add Kibana and Logstash to elk-certs group
+  user:
+    name: "{{ item }}"
+    groups: elk-certs
+    append: yes
+  loop:
+    - kibana
+    - logstash
+
+# Set directory ownership and permissions
+- name: Ensure Elasticsearch certs directory has correct permissions
+  file:
+    path: /etc/elasticsearch/certs
+    state: directory
+    owner: elasticsearch
+    group: elk-certs
+    mode: 0750
+    recurse: yes
+
+# Adjust permissions for instance certificate
+- name: Ensure instance.crt is readable by elk-certs group
+  file:
+    path: /etc/elasticsearch/certs/instance/instance.crt
+    owner: elasticsearch
+    group: elk-certs
+    mode: 0640
+
+# Adjust permissions for instance.key (keep it restricted)
+- name: Ensure instance.key is only readable by elasticsearch
+  file:
+    path: /etc/elasticsearch/certs/instance/instance.key
+    owner: elasticsearch
+    group: elasticsearch
+    mode: 0600
+    
+# Ensure /etc/elasticsearch itself is accessible by elk-certs group
+- name: Ensure /etc/elasticsearch is traversable by elk-certs group
+  file:
+    path: /etc/elasticsearch
+    state: directory
+    owner: root
+    group: elk-certs
+    mode: 0750
 
 - name: enable elasticsearch
   service:
     name: elasticsearch
     enabled: yes
+
+- name: start elasticsearch
+  service:
+    name: elasticsearch
+    state: started
+
+- name: Restart Elasticsearch
+  service:
+    name: elasticsearch
+    state: restarted
+
+- name: enable logstash
+  service:
+    name: logstash
+    enabled: yes    
 
 - name: enable kibana
   service:
@@ -98,11 +179,6 @@
 - name: start logstash
   service:
     name: logstash
-    state: started
-
-- name: start elasticsearch
-  service:
-    name: elasticsearch
     state: started
 
 - name: start kibana

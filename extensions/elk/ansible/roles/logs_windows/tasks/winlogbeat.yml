@@ -53,6 +53,12 @@
     dest: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\winlogbeat.yml"
   notify: restart-winlogbeat
 
+- name: Configure one-time elasticsearch config winlogbeat
+  win_template:
+    src: winlogbeat-onetime.yml.j2
+    dest: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\winlogbeat-onetime.yml"
+  notify: restart-winlogbeat
+
 - name: Install winlogbeat
   win_shell: .\install-service-winlogbeat.ps1
   args:

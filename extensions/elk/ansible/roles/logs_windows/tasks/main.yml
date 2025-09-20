@@ -56,14 +56,53 @@
     post_reboot_delay: 100
   when: resultwlb.state is defined and resultwlb.state != 'running'
 
-- name: Run winlogbeat
-  win_command: "winlogbeat -e"
+- name: Stop service if it is running
+  win_service:
+    name: winlogbeat
+    state: stopped
+  when:
+    - resultwlb.exists | default(false)
+    - resultwlb.state is defined
+    - resultwlb.state == 'running'
+
+- name: Set the password manually in the ELK Server
+  pause:
+    prompt: "Set the password manually to changeme in the ELK Server for all users using sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive. Press Enter to continue after done."
+
+- name: Run winlogbeat setup through direct elasticsearch connectivity
+  win_command: "winlogbeat.exe setup --index-management --dashboards -c winlogbeat-onetime.yml -e"
   args:
     chdir: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\"
-  when: resultwlb.state is defined and resultwlb.state != 'running'
+  register: winlogbeat_setup
+  ignore_errors: yes
+  run_once: true
+
+- name: Pause for manual intervention if setup failed
+  pause:
+    prompt: |
+      Winlogbeat setup failed with error:
+      {{ winlogbeat_setup.stderr }}
+      Please fix the issue manually (e.g., check Elasticsearch connection, certificates, etc.)
+      Sample command to run on the device: .\winlogbeat.exe setup --index-management --dashboards -c .\winlogbeat-onetime.yml -e
+      Press Enter to continue once done.
+  when: winlogbeat_setup is failed
+  run_once: true
+
+#- name: Run winlogbeat
+#  win_command: "winlogbeat -e"
+#  args:
+#    chdir: "{{ winlogbeat_service.install_path_64 }}\\winlogbeat-{{ winlogbeat_service.version }}-windows-x86_64\\"
+#  when: resultwlb.state is defined and resultwlb.state != 'running'
+
+- name: check winlogbeat service status
+  win_service:
+    name: winlogbeat
+  register: resultwlb
+  failed_when: resultwlb is not defined
+  ignore_errors: yes
 
 # RUN winlogbeat
-- name: check winlogbeat service
+- name: ensure winlogbeat service is started
   win_service:
     name: winlogbeat
     start_mode: auto

@@ -87,3 +87,14 @@ discovery.type: single-node
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+xpack.security.enabled: true
+
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.key: /etc/elasticsearch/certs/instance/instance.key
+xpack.security.transport.ssl.certificate: /etc/elasticsearch/certs/instance/instance.crt
+xpack.security.transport.ssl.certificate_authorities: [ "/etc/elasticsearch/certs/instance/instance.crt" ]
+
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.key: /etc/elasticsearch/certs/instance/instance.key
+xpack.security.http.ssl.certificate: /etc/elasticsearch/certs/instance/instance.crt
+xpack.security.http.ssl.certificate_authorities: [ "/etc/elasticsearch/certs/instance/instance.crt" ]
