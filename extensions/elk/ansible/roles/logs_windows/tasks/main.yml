@@ -84,6 +84,8 @@
       {{ winlogbeat_setup.stderr }}
       Please fix the issue manually (e.g., check Elasticsearch connection, certificates, etc.)
       Sample command to run on the device: .\winlogbeat.exe setup --index-management --dashboards -c .\winlogbeat-onetime.yml -e
+      Sample command to delete the existing is "curl -u elastic:changeme -k -XDELETE "https://192.168.57.50:9200/winlogbeat-7.17.6" if the errors states the below:
+      "Exiting: resource 'winlogbeat-7.17.6' exists, but it is not an alias Exiting: resource 'winlogbeat-7.17.6' exists, but it is not an alias"
       Press Enter to continue once done.
   when: winlogbeat_setup is failed
   run_once: true
